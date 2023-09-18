@@ -4,7 +4,7 @@ Registro y Consulta de estudiantes Universitarios
 
 Sebastián Alzate Sierra
 Maria Paula Ramos Martínez
-xxxxxxxxxxxxxxxx
+Juan Isaza
 
 Taller #2 Programación
 '''
