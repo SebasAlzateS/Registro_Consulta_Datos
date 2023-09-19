@@ -34,10 +34,10 @@ def load_data():
     try: 
         with open("base_de_datos.txt", "r") as archivo: #Lectura de base de datos, se usa with porque este cierra la base de datos cuando acaba el bloque with
             for linea in archivo:                       #Iteración linea por linea del archivo
-                nombre, edad, carrera, promedio = linea.strip().split(",")  #Cada dato es separado por ","
+                cedula, nombre, edad, carrera, promedio = linea.strip().split(",")  #Cada dato es separado por ","
                 edad = int(edad)                        #Cada edad es cargada como entero
                 promedio = float(promedio)              #Cada promedio es cargado como flotante
-                estudiantes[nombre] = {"edad": edad, "carrera": carrera, "promedio": promedio}  #Clave: Nombre , Dicc: edad, carrera, promedio
+                estudiantes[cedula] = {"nombre": nombre, "edad": edad, "carrera": carrera, "promedio": promedio}  #Clave: cedula , Dicc:nombre, edad, carrera, promedio
         print(f"Base de datos cargada con {len(estudiantes)} estudiantes.")                     #Cantidad de estudiantes previamente registrados
     except FileNotFoundError:                           #Si el archivo de base de datos no existe - no se encuentra
         print("No se encontró base de datos anterior, comenzando con una base de datos vacía.")
@@ -47,8 +47,9 @@ def save_data():
     Guardar base de datos
     '''
     with open("base_de_datos.txt", "w") as archivo:     #Escritura en base de datos
-        for nombre, datos in estudiantes.items():       # Recorrer diccionario estudiantes, para añadir clave y datos
-            archivo.write(f"{nombre},{datos['edad']},{datos['carrera']},{datos['promedio']}\n") #Escribir en cada linea la clave(nombre) , con sus datos
+        for cedula, datos in estudiantes.items():       # Recorrer diccionario estudiantes, para añadir clave y datos
+            archivo.write(f"{cedula},{datos['nombre']},{datos['edad']},{datos['carrera']},{datos['promedio']}\n") #Escribir en cada linea la clave(cedula) , con sus datos
+    print("Base de datos guardada.")
 #________________________________________________________________________________________________________________________
 def register():
     '''
@@ -57,9 +58,16 @@ def register():
     
     '''
     while True:
-        nombre = input("Ingrese el nombre del estudiante: ")
-        if nombre.isalpha():                            #Validación nombre solo contiene letras                         
+        cedula = input("Ingrese la cedula del estudiante sin puntos y sin espacios: ")
+        if cedula.isdigit():  
             break                                       #Salir del bucle si cumple la condición
+        else:
+            print("Error. Vuelva a ingresar la cedula.")
+
+    while True:
+        nombre = input("Ingrese el nombre del estudiante: ")
+        if nombre.isalpha():
+            break
         else:
             print("Error: El nombre debe contener solo letras.")
 
@@ -94,7 +102,7 @@ def register():
         try:
             promedio = float(promedio)                  #Conversión a flotante
             if 0.0 <= promedio <= 5.0:                  #Rango de notas posibles
-                estudiantes[nombre] = {"edad": edad, "carrera": opcion_carrera, "promedio": promedio} #Se dió registro exitoso, se guarda la clave nombre con un diccionario con sus datos
+                estudiantes[cedula] = {"nombre": nombre, "edad": edad, "carrera": opcion_carrera, "promedio": promedio} #Se dió registro exitoso, se guarda la clave cedula con un diccionario con sus datos
                 print("Estudiante registrado exitosamente.")
                 break                                   #Salir del bucle si cumple la condición
             else:
@@ -122,8 +130,11 @@ def students_inquiry():
 
             if len(estudiantes_carrera) > 0:        #Verifica existencia de estudiantes
                 print(f"Estudiantes de la carrera {carreras[opcion_carrera]}:")     #Imprime el título con el nombre de la carrera
-                for nombre, datos in estudiantes_carrera:   #Itera a través de los estudiantes encontrados
-                    print(f"Nombre: {nombre}, Edad: {datos['edad']}, Promedio: {datos['promedio']}")    #Imprime todo lo del estudiante
+                for cedula, datos in estudiantes_carrera:   #Itera a través de los estudiantes encontrados
+                    nombre = datos.get('nombre', 'Nombre no disponible')  # Usar 'get' para obtener el nombre
+                    edad = datos.get('edad', 'Edad no disponible')        # Usar 'get' para obtener la edad
+                    promedio = datos.get('promedio', 'Promedio no disponible')  # Usar 'get' para obtener el promedio
+                    print(f"Cédula: {cedula}, Nombre: {datos['nombre']} , Edad: {datos['edad']}, Promedio: {datos['promedio']}")    #Imprime todo lo del estudiante
             else:
                 print(f"No se encontraron estudiantes en la carrera {carreras[opcion_carrera]}.")
             break  # Salir del bucle si se ingresó una opción válida
@@ -166,8 +177,11 @@ def best_students():
         
         if len(estudiantes_destacados) > 0:     #Corrobora la existencia de estudiantes
             print("Estudiantes destacados:")
-            for nombre, datos in estudiantes_destacados:     #Mostrar detalles de los estudiantes destacados
-                print(f"Nombre: {nombre}, Edad: {datos['edad']}, Carrera: {datos['carrera']}, Promedio: {datos['promedio']}")
+            for cedula, datos in estudiantes_destacados:     #Mostrar detalles de los estudiantes destacados
+                nombre = datos.get('nombre', 'Nombre no disponible')  # Usar 'get' para obtener el nombre o proporcionar un valor predeterminado
+                edad = datos.get('edad', 'Edad no disponible')        # Usar 'get' para obtener la edad o proporcionar un valor predeterminado
+                promedio = datos.get('promedio', 'Promedio no disponible')  # Usar 'get' para obtener el promedio o proporcionar un valor predeterminado
+                print(f"Cédula: {cedula}, Nombre: {datos['nombre']}, Edad: {datos['edad']}, Carrera: {datos['carrera']}, Promedio: {datos['promedio']}")
         else:
                 print("No hay estudiantes destacados.")
     except TypeError:
@@ -195,8 +209,11 @@ def best_students_by_career():
             
             if len(estudiantes_destacados) > 0: #Verifica si hay estudiantes destacados en la carrera.                
                 print(f"Estudiantes destacados en la carrera {carreras[opcion_carrera]}:") # Imprime el título de la carrera y luego los datos de los estudiantes destacados.
-                for nombre, datos in estudiantes_destacados:
-                    print(f"Nombre: {nombre}, Edad: {datos['edad']}, Promedio: {datos['promedio']}")
+                for cedula, datos in estudiantes_destacados:
+                    nombre = datos.get('nombre', 'Nombre no disponible')  # Usar 'get' para obtener el nombre
+                    edad = datos.get('edad', 'Edad no disponible')        # Usar 'get' para obtener la edad
+                    promedio = datos.get('promedio', 'Promedio no disponible')  # Usar 'get' para obtener el promedio
+                    print(f"Cédula: {cedula}, Nombre: {datos['nombre']}, Edad: {datos['edad']}, Promedio: {datos['promedio']}")
                 break                           #Sale del bucle while cuando se muestra la información.
             else:                
                 print(f"No se encontraron estudiantes destacados en la carrera {carreras[opcion_carrera]}.")
@@ -214,22 +231,20 @@ def update_students():
     if len(estudiantes) > 0:                       #Verifica si hay estudiantes.
         print("Lista de Estudiantes:")             #Mostrar la lista de estudiantes con un número de identificación
         i = 1                                      #Inicializamos i en 1 para llevar un número de identificación.
-        for nombre, datos in estudiantes.items():  #Iteramos a través de los estudiantes y sus datos.
+        for cedula, datos in estudiantes.items():  #Iteramos a través de los estudiantes y sus datos.
             nombre_carrera = carreras[datos['carrera']]  #Obtenemos el nombre de la carrera a partir del código de carrera.
             
-            print(f"{i}. Nombre: {nombre}, Edad: {datos['edad']}, Carrera: {nombre_carrera}, Promedio: {datos['promedio']}")
+            print(f"{i}. Cédula: {cedula}, Nombre: {datos['nombre']}, Edad: {datos['edad']}, Carrera: {nombre_carrera}, Promedio: {datos['promedio']}")
             i += 1                                 #Incrementamos i para el siguiente estudiante.
 
         while True:                                 #Iniciamos un bucle infinito para la interacción del usuario.
             try:
                 seleccion = int(input("Ingrese el número del estudiante a actualizar: "))  #Solicitamos al usuario que ingrese un número.
 
-                if 1 <= seleccion <= len(estudiantes):                  #Verificamos si la selección del usuario está dentro del rango válido.
-                    nombre_estudiante = list(estudiantes.keys())[seleccion - 1]  # Obtenemos el nombre del estudiante seleccionado.
-                    #Se le resta uno ya que el numero de lista en verdad empieza desde cero.
+                if 1 <= seleccion <= len(estudiantes):
+                    cedula_estudiante = list(estudiantes.keys())[seleccion - 1]
+                    estudiante = estudiantes[cedula_estudiante]
                     
-                    estudiante = estudiantes[nombre_estudiante]         #Obtenemos los datos del estudiante seleccionado.
-
                     # Nueva carrera
                     print("Seleccione la nueva carrera: ")
                     for numero, nombre_carrera in carreras.items():     #Iteramos a través de las carreras.
@@ -263,7 +278,7 @@ def update_students():
                             promedio_actualizado = float(promedio_actualizado)      #Convertimos la entrada a flotante.
                             if 0.0 <= promedio_actualizado <= 5.0:                  #Verificamos si el promedio está en el rango válido.
                                 estudiante["promedio"] = promedio_actualizado       #Actualizamos el promedio del estudiante.
-                                print(f"Información de {nombre_estudiante} actualizada.")  #Mensaje de confirmación.
+                                print(f"Información de {cedula_estudiante} actualizada.")  #Mensaje de confirmación.
                                 break                                               #Salimos del bucle de entrada de promedio.
                             else:
                                 print("Error: El promedio debe estar entre 0.0 y 5.0.")  #Mensaje de error fuera de rango.
@@ -289,17 +304,18 @@ def show_students():
         print("\nLista de Estudiantes:")    # Imprime un encabezado para la lista de estudiantes.
         
         # Encabezado de la tabla con formato
-        print("{:<10} {:<10} {:<10} {:<30}".format("Nombre", "Edad", "Promedio", "Carrera"))  # Imprime un encabezado formateado.
+        print("{:<10} {:<10} {:<10} {:<10} {:<30}".format("Cédula","Nombre", "Edad", "Promedio", "Carrera"))  # Imprime un encabezado formateado.
         print("-" * 60)                     # Imprime una línea horizontal para separar el encabezado de los datos.
 
-        for nombre, datos in estudiantes.items():   # Itera a través de los estudiantes y sus datos en el diccionario 'estudiantes'.
+        for cedula, datos in estudiantes.items():   # Itera a través de los estudiantes y sus datos en el diccionario 'estudiantes'.
+            nombre = datos["nombre"]                # Obtuene el nombre del estudiante.
             edad = datos["edad"]                    # Obtiene la edad del estudiante.
             carrera_numero = datos["carrera"]       # Obtiene el código de carrera del estudiante.
             promedio = datos["promedio"]            # Obtiene el promedio del estudiante.
             nombre_carrera = carreras[carrera_numero]  # Obtiene el nombre de la carrera correspondiente al código de carrera.
             
             # Imprime los datos del estudiante formateados en una fila de la tabla.
-            print("{:<10} {:<10} {:<10} {:<30}".format(nombre, edad, promedio, nombre_carrera))
+            print("{:<10} {:<10} {:<10} {:<10} {:<30}".format(cedula, nombre, edad, promedio, nombre_carrera))
 
     else:
         print("No hay estudiantes registrados.")    #Imprime un mensaje si no hay estudiantes en el diccionario 'estudiantes'.
@@ -314,8 +330,8 @@ def delete_student():
         
         print("Lista de Estudiantes:")  # Mostrar la lista de estudiantes con un número de identificación
         i = 1                           # Inicializamos un contador para numerar a los estudiantes
-        for nombre, datos in estudiantes.items():  # Iteramos sobre el diccionario de estudiantes
-            print(f"{i}. Nombre: {nombre}, Edad: {datos['edad']}, Carrera: {datos['carrera']}, Promedio: {datos['promedio']}")
+        for cedula, datos in estudiantes.items():  # Iteramos sobre el diccionario de estudiantes
+            print(f"{i}. Cédula: {cedula}, Nombre: {datos['nombre']}, Edad: {datos['edad']}, Carrera: {datos['carrera']}, Promedio: {datos['promedio']}")
             i += 1  # Incrementamos el contador
 
         while True:
@@ -323,9 +339,9 @@ def delete_student():
                 seleccion = int(input("Ingrese el número del estudiante a eliminar: "))
 
                 if 1 <= seleccion <= len(estudiantes):                           # Verificamos que la selección sea válida
-                    nombre_estudiante = list(estudiantes.keys())[seleccion - 1]  # Obtenemos el nombre del estudiante a eliminar
-                    del estudiantes[nombre_estudiante]                           # Elimina al estudiante del diccionario
-                    print(f"Estudiante {nombre_estudiante} eliminado del registro.")
+                    cedula_estudiante = list(estudiantes.keys())[seleccion - 1]  # Obtenemos la cédula del estudiante a eliminar
+                    del estudiantes[cedula_estudiante]                           # Elimina al estudiante del diccionario
+                    print(f"Estudiante {cedula_estudiante} eliminado del registro.")
                     break
 
                 else:
@@ -383,4 +399,3 @@ def menu():
               Ocurrió interrupción del usuario.""")
 
 #_____________________________________________________________________________________________________________________
-
