@@ -163,8 +163,8 @@ def best_students():
             print("Estudiantes destacados:")
             for nombre, datos in estudiantes_destacados:     #Mostrar detalles de los estudiantes destacados
                 print(f"Nombre: {nombre}, Edad: {datos['edad']}, Carrera: {datos['carrera']}, Promedio: {datos['promedio']}")
-            else:
-                print("No hay estudiantes destacados.")
+        else:
+            print("No hay estudiantes destacados.")
     except TypeError:
         print("No hay estudiantes registrados.")
 
