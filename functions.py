@@ -102,30 +102,35 @@ def register():
         except ValueError:                              #Conversión a flotante falló (No es ni entero ni decimal)
             print("Error: El promedio debe ser un número decimal válido.")
 #_____________________________________________________________________________________________________________________
+
 def students_inquiry():
     '''
     Consulta de estudiantes pertenecientes de una carrera
     '''
-    print("Carreras disponibles:")                      #Imprime un mensaje indicando que se mostrarán las carreras disponibles
-    for numero, nombre_carrera in carreras.items():     #Itera a través de las carreras disponibles.
-        print(f"{numero}. {nombre_carrera}")            #Imprime el número y nombre de cada carrera.
+    while True:  
+        print("Carreras disponibles:")                   #Imprime un mensaje indicando que se mostrarán las carreras disponibles
+        for numero, nombre_carrera in carreras.items():  #Itera a través de las carreras disponibles.
+            print(f"{numero}. {nombre_carrera}")         #Imprime el número y nombre de cada carrera.
 
-    opcion_carrera = input("Ingrese el número de la carrera a consultar: ") #Solicita al usuario que ingrese el número de la carrera a consultar
+        opcion_carrera = input("Ingrese el número de la carrera a consultar: ")     #Solicita al usuario que ingrese el número de la carrera a consultar
 
-    if opcion_carrera in carreras:                      #Verifica si la opción ingresada está en el diccionario de carreras
-        estudiantes_carrera = filter(lambda x: x[1]["carrera"] == opcion_carrera, estudiantes.items()) #Filtra los estudiantes cuya carrera coincide con la opción ingresada
-        #Filter , filtra los estudiantes.items(), toma dos argumentos , lambda(encargada del filtro) y el iterable (estudiantes.items())
-        #Itera cada tupla en estudiantes.items() si es True (coinciden las carreras), se incluye el resultado
-        estudiantes_carrera = list(estudiantes_carrera)  #Convierte el filtro en una lista
+        if opcion_carrera in carreras:                    #Verifica si la opción ingresada está en el diccionario de carreras
+            estudiantes_carrera = filter(lambda x: x[1]["carrera"] == opcion_carrera, estudiantes.items()) #Filtra los estudiantes cuya carrera coincide con la opción ingresada
+            #Filter , filtra los estudiantes.items(), toma dos argumentos , lambda(encargada del filtro) y el iterable (estudiantes.items())
+            #Itera cada tupla en estudiantes.items() si es True (coinciden las carreras), se incluye el resultado
+            estudiantes_carrera = list(estudiantes_carrera) #Convierte el filtro en una lista
 
-        if len(estudiantes_carrera) > 0:    #Verifica existencia de estudiantes
-            print(f"Estudiantes de la carrera {carreras[opcion_carrera]}:") #Imprime el título con el nombre de la carrera
-            for nombre, datos in estudiantes_carrera:   #Itera a través de los estudiantes encontrados
-                print(f"Nombre: {nombre}, Edad: {datos['edad']}, Promedio: {datos['promedio']}")    #Imprime todo lo del estudiante
+            if len(estudiantes_carrera) > 0:        #Verifica existencia de estudiantes
+                print(f"Estudiantes de la carrera {carreras[opcion_carrera]}:")     #Imprime el título con el nombre de la carrera
+                for nombre, datos in estudiantes_carrera:   #Itera a través de los estudiantes encontrados
+                    print(f"Nombre: {nombre}, Edad: {datos['edad']}, Promedio: {datos['promedio']}")    #Imprime todo lo del estudiante
+            else:
+                print(f"No se encontraron estudiantes en la carrera {carreras[opcion_carrera]}.")
+            break  # Salir del bucle si se ingresó una opción válida
         else:
-            print(f"No se encontraron estudiantes en la carrera {carreras[opcion_carrera]}.")
-    else:
-        print("Error: Opción no válida. Por favor, ingrese un número de carrera válido.")
+            print("Error: Opción no válida. Por favor, ingrese un número de carrera válido.")
+
+
 #______________________________________________________________________________________________________________________
 def general_average():
     '''
@@ -164,7 +169,7 @@ def best_students():
             for nombre, datos in estudiantes_destacados:     #Mostrar detalles de los estudiantes destacados
                 print(f"Nombre: {nombre}, Edad: {datos['edad']}, Carrera: {datos['carrera']}, Promedio: {datos['promedio']}")
         else:
-            print("No hay estudiantes destacados.")
+                print("No hay estudiantes destacados.")
     except TypeError:
         print("No hay estudiantes registrados.")
 
@@ -319,7 +324,7 @@ def delete_student():
 
                 if 1 <= seleccion <= len(estudiantes):                           # Verificamos que la selección sea válida
                     nombre_estudiante = list(estudiantes.keys())[seleccion - 1]  # Obtenemos el nombre del estudiante a eliminar
-                    del estudiantes[nombre_estudiante]                             # Elimina al estudiante del diccionario
+                    del estudiantes[nombre_estudiante]                           # Elimina al estudiante del diccionario
                     print(f"Estudiante {nombre_estudiante} eliminado del registro.")
                     break
 
@@ -378,3 +383,4 @@ def menu():
               Ocurrió interrupción del usuario.""")
 
 #_____________________________________________________________________________________________________________________
+
